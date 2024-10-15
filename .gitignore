@@ -1,0 +1,14 @@
+# Maven
+target/
+*.log
+*.class
+.settings/
+.classpath
+.project
+.mvn/
+
+# VS Code
+.vscode
+
+# Linux
+*~
