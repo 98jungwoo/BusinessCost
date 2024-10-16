@@ -1,5 +1,5 @@
 package woo.cost.mgmt.models.admin;
 
-public class AdminDaoImp {
+public class AdminDaoImp implements AdminDao {
 
 }
