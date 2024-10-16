@@ -1,8 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd">
 	
+
 	<!-- Root Context: defines shared resources visible to all other web components -->
-		
+
+	<bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
+		<!-- 배포할때 -->
+		<!-- <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/> -->
+		<!-- <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/new_project"/> -->
+		<property name="driverClassName" value="net.sf.log4jdbc.sql.jdbcapi.DriverSpy"/>
+		<property name="jdbcUrl" value="jdbc:log4jdbc:mysql://localhost:3306/new_project" />
+		<property name="username" value="${spring.datasource.username}"/>
+		<property name="password" value="${spring.datasource.password}"/>
+	</bean>
+
+	<!-- HikariCP configuration -->
+	<bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+		<constructor-arg ref="hikariConfig"/>
+	</bean>
+
+	<bean class="org.mybatis.spring.SqlSessionFactoryBean" id="sqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"/>
+		<property name="configLocation" value="classpath:/configuration/config.xml"/>
+		<property name="mapperLocations" value="classpath:/mapper/*.xml"/>
+	</bean>
+
+	<!-- <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg ref="sqlSessionFactoryBean" />
+		constructor-arg이걸 언제 쓰는지 모르면 오류 확인되는거 보면 됨
+	</bean> -->
+
+	<!-- <mybatis-spring:scan base-package="org.zerock.mapper"/> -->
+	<context:component-scan base-package="woo.cost.mgmt"/>
+
+
+	<!-- 만약 xml이 아니라 자바에서 사용한다면 @Value("${file.upload.path}")를 변수위에 지정해줘야한다. 
+		@Value("${spring.datasource.password}")
+		private String password;
+	-->
+	<context:property-placeholder location="classpath:application.properties"/>
+
+
 </beans>
