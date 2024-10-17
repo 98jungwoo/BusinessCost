@@ -1,5 +1,8 @@
 package woo.cost.mgmt.models.admin;
 
-public interface AdminDao {
+import java.util.List;
 
+public interface AdminDao {
+    
+    List<AdminDto> adminSelectAll();
 }
