@@ -43,3 +43,4 @@ target/
 # 환경설정 파일을 제외하여 보안 유지
 # ======================================
 application.properties
+.bashrc
