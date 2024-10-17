@@ -8,8 +8,8 @@
 	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd">
 	
-
-	<!-- Root Context: defines shared resources visible to all other web components -->
+	<!-- Spring MVC 설정 -->
+	<mvc:annotation-driven />
 
 	<bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
 		<!-- 배포할때 -->
@@ -26,26 +26,41 @@
 		<constructor-arg ref="hikariConfig"/>
 	</bean>
 
+	<!-- 만약 xml이 아니라 자바에서 사용한다면 @Value("${file.upload.path}")를 변수위에 지정해줘야한다. 
+		@Value("${spring.datasource.password}")
+		private String password;-->
 	<bean class="org.mybatis.spring.SqlSessionFactoryBean" id="sqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource"/>
 		<property name="configLocation" value="classpath:/configuration/config.xml"/>
 		<property name="mapperLocations" value="classpath:/mapper/*.xml"/>
 	</bean>
 
+    <!-- JSON 변환을 위한 메시지 컨버터 설정 -->
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+        <property name="messageConverters">
+			<!-- List로 감싸는 이유는 여러 가지 형식의 데이터 변환을 지원하기 위해 -->
+            <list>
+				<!-- JSON 변환기 -->
+                <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                    <!-- Jackson 라이브러리를 사용하여 JSON 변환 -->
+                    <property name="objectMapper">
+                        <bean class="com.fasterxml.jackson.databind.ObjectMapper" />
+                    </property>
+                </bean>
+                <!-- 문자열 변환기 -->
+				<bean class="org.springframework.http.converter.StringHttpMessageConverter" />
+            </list>
+        </property>
+    </bean>
+
+	<!-- Component 스캔 설정: @Controller, @Service 등을 자동으로 스캔 -->
+	<context:component-scan base-package="woo.cost.mgmt"/>
+
+	<context:property-placeholder location="classpath:application.properties"/>
 	<!-- <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
 		<constructor-arg ref="sqlSessionFactoryBean" />
 		constructor-arg이걸 언제 쓰는지 모르면 오류 확인되는거 보면 됨
 	</bean> -->
-
-	<!-- <mybatis-spring:scan base-package="org.zerock.mapper"/> -->
-	<context:component-scan base-package="woo.cost.mgmt"/>
-
-
-	<!-- 만약 xml이 아니라 자바에서 사용한다면 @Value("${file.upload.path}")를 변수위에 지정해줘야한다. 
-		@Value("${spring.datasource.password}")
-		private String password;
-	-->
-	<context:property-placeholder location="classpath:application.properties"/>
 
 
 </beans>
