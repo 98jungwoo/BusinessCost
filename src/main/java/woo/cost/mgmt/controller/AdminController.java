@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("api/admin")
 public class AdminController {
 
-    @Autowired
     private final AdminServiceImp adminserviceImp;
 
     @GetMapping("/select")
