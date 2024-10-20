@@ -9,16 +9,16 @@ import java.sql.DriverManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.junit.Test;
-//import org.springframework.beans.factory.annotation.Value;
-//import org.springframework.context.annotation.PropertySource;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 
 
-// @PropertySource("classpath:/application.properties")
+@PropertySource("classpath:/application.properties")
 public class JdbcTest {
 
-//    @Value("${spring.datasource.username}")
+   @Value("${spring.datasource.username}")
     private String databaseUsername;
-//    @Value("${pring.datasource.password}")
+   @Value("${pring.datasource.password}")
     private String databasePassword;
 
     private static final Logger logger = LoggerFactory.getLogger(JdbcTest.class);
