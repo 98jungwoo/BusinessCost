@@ -2,38 +2,46 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
 	xmlns:tx="http://www.springframework.org/schema/tx"
-	xmlns:mvc="http://www.springframework.org/schema/mvc"
-	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd">
+	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
 	
-	<!-- Spring MVC 설정 -->
-	<mvc:annotation-driven />
-
-	<bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
-		<!-- 배포할때 -->
-		<!-- <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/> -->
-		<!-- <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/new_project"/> -->
-		<property name="driverClassName" value="net.sf.log4jdbc.sql.jdbcapi.DriverSpy"/>
-		<property name="jdbcUrl" value="jdbc:log4jdbc:mysql://localhost:3306/new_project" />
-		<property name="username" value="${spring.datasource.username}"/>
-		<property name="password" value="${spring.datasource.password}"/>
-	</bean>
+	<!-- Root Context: defines shared resources visible to all other web components -->
+		
+	<context:component-scan base-package="nam.cost.business" />	
 
 	<!-- HikariCP configuration -->
-	<bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
-		<constructor-arg ref="hikariConfig"/>
+	<bean id="hikariDataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+		<!-- 배포할때 -->
+		<property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
+		<property name="jdbcUrl" value="jdbc:mysql://localhost:3306/new_project"/>
+		<!-- test할때 -->
+		<!-- <property name="driverClassName" value="net.sf.log4jdbc.sql.jdbcapi.DriverSpy"/> -->
+		<!-- <property name="jdbcUrl" value="jdbc:log4jdbc:mysql://localhost:3306/new_project" /> -->
+		<property name="username" value="${spring.datasource.username}"/>
+		<property name="password" value="${spring.datasource.password}"/> <!--혹시 안되면 직접 입력해서 넣기-->
 	</bean>
 
-	<!-- 만약 xml이 아니라 자바에서 사용한다면 @Value("${file.upload.path}")를 변수위에 지정해줘야한다. 
-		@Value("${spring.datasource.password}")
-		private String password;-->
-	<bean class="org.mybatis.spring.SqlSessionFactoryBean" id="sqlSessionFactoryBean">
-		<property name="dataSource" ref="dataSource"/>
-		<property name="configLocation" value="classpath:/configuration/config.xml"/>
-		<property name="mapperLocations" value="classpath:/mapper/*.xml"/>
+	<!-- <bean class="org.mybatis.spring.SqlSessionFactoryBean" id="sqlSessionFactoryBean">
+		<property name="dataSource" ref="hikariDataSource" />
+		<property name="configLocation" value="classpath:/configurarion/config.xml" />
+		<property name="mapperLocations" value="classpath:/mapper/*.xml" />
+	</bean> -->
+
+	<!-- constructor-arg이걸 언제 쓰는지 모르면 오류 확인되는거 보면 됨 -->
+	<!-- <bean class="org.mybatis.spring.SqlSessionTemplate" id="sqlSessionTemplate">
+		<constructor-arg ref="sqlSessionFactoryBean" />
+	</bean> -->
+
+	<!-- DataSourceTransactionManager의 의미는 사용해서 자동으로 커밋과 롤백을 사용하겟다. -->
+	<bean class="org.springframework.jdbc.datasource.DataSourceTransactionManager" id="transactionManager">
+		<property name="dataSource" ref="hikariDataSource" />
 	</bean>
+
+	<!-- driven: 조정자 , annotation-driven: 어노테이션을 생성하거나 도와주는 역할을 한다. 이게 없으면 어노테이션을 
+		사용할수가 없다. -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
 
     <!-- JSON 변환을 위한 메시지 컨버터 설정 -->
     <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
@@ -52,15 +60,6 @@
             </list>
         </property>
     </bean>
-
-	<!-- Component 스캔 설정: @Controller, @Service 등을 자동으로 스캔 -->
-	<context:component-scan base-package="woo.cost.mgmt"/>
-
-	<context:property-placeholder location="classpath:application.properties"/>
-	<!-- <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
-		<constructor-arg ref="sqlSessionFactoryBean" />
-		constructor-arg이걸 언제 쓰는지 모르면 오류 확인되는거 보면 됨
-	</bean> -->
 
 
 </beans>

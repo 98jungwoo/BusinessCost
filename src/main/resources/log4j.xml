@@ -11,7 +11,7 @@
 	</appender>
 	
 	<!-- Application Loggers -->
-	<logger name="woo.cost.mgmt">
+	<logger name="nam.cost.business">
 		<level value="info" />
 	</logger>
 	

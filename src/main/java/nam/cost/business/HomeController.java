@@ -1,4 +1,4 @@
-package woo.cost.mgmt;
+package nam.cost.business;
 
 import java.text.DateFormat;
 import java.util.Date;

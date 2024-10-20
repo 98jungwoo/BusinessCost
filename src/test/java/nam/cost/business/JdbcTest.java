@@ -1,25 +1,27 @@
-package woo.cost.mgmt;
+package nam.cost.business;
 
 import static org.junit.Assert.fail;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
+//import org.springframework.beans.factory.annotation.Value;
+//import org.springframework.context.annotation.PropertySource;
 
-import lombok.extern.log4j.Log4j;
 
-@Log4j
-@PropertySource("classpath:/application.properties")
-public class JDBCTest {
+// @PropertySource("classpath:/application.properties")
+public class JdbcTest {
 
 //    @Value("${spring.datasource.username}")
     private String databaseUsername;
 //    @Value("${pring.datasource.password}")
     private String databasePassword;
 
+    private static final Logger logger = LoggerFactory.getLogger(JdbcTest.class);
 
     static {
         try{
@@ -35,10 +37,10 @@ public class JDBCTest {
             Connection conn = 
                 DriverManager.getConnection(
                     "jdbc:mysql://localhost:3306/new_project", //url
-                    "admin", //username
-                    "dong1999!@")){
+                    databaseUsername, //username
+                    databasePassword)) {  //혹시 안되면 실제 내용 입력하기
 
-                System.out.println("conn:" + conn);
+        		logger.info("conn:" + conn);
         }catch(Exception e) {
             fail(e.getMessage());
         }

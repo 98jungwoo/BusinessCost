@@ -1,4 +1,4 @@
-package woo.cost.mgmt.models.admin;
+package nam.cost.business.models;
 
 import lombok.Getter;
 import lombok.Setter;
